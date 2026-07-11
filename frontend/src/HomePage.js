@@ -2,11 +2,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { socket, connectSocket } from './socket';
 
+const GAMES = [
+  { id: 'holdem', name: "Texas Hold'em", icon: '♠', available: true },
+  { id: 'blackjack', name: 'Blackjack', icon: '♥', available: false },
+  { id: 'spades', name: 'Spades', icon: '♣', available: false }
+];
+
 const HomePage = () => {
   const navigate = useNavigate();
   const [playerName, setPlayerName] = useState('');
   const [roomCode, setRoomCode] = useState('');
   const [botCount, setBotCount] = useState(3);
+  const [selectedGame, setSelectedGame] = useState('holdem');
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState('');
@@ -62,168 +69,79 @@ const HomePage = () => {
     });
   };
 
-  const containerStyle = {
-    minHeight: '100vh',
-    background: 'linear-gradient(to bottom right, #065f46, #064e3b)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '20px'
-  };
-
-  const cardStyle = {
-    backgroundColor: 'white',
-    borderRadius: '12px',
-    padding: '40px',
-    maxWidth: '500px',
-    width: '100%',
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
-  };
-
-  const titleStyle = {
-    fontSize: '32px',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: '30px',
-    color: '#1f2937'
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: '12px',
-    border: '2px solid #d1d5db',
-    borderRadius: '8px',
-    fontSize: '16px',
-    marginBottom: '15px',
-    boxSizing: 'border-box'
-  };
-
-  const buttonStyle = {
-    width: '100%',
-    padding: '14px',
-    borderRadius: '8px',
-    border: 'none',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    marginBottom: '10px',
-    transition: 'all 0.2s'
-  };
-
-  const primaryButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#059669',
-    color: 'white'
-  };
-
-  const secondaryButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#2563eb',
-    color: 'white'
-  };
-
-  const dividerStyle = {
-    textAlign: 'center',
-    margin: '30px 0',
-    color: '#6b7280',
-    position: 'relative'
-  };
-
-  const errorStyle = {
-    backgroundColor: '#fee2e2',
-    color: '#991b1b',
-    padding: '12px',
-    borderRadius: '8px',
-    marginBottom: '15px',
-    textAlign: 'center'
-  };
-
-  const labelStyle = {
-    display: 'block',
-    marginBottom: '8px',
-    color: '#374151',
-    fontWeight: '600'
-  };
-
-  const sliderContainerStyle = {
-    marginBottom: '20px'
-  };
-
-  const sliderStyle = {
-    width: '100%',
-    marginTop: '8px'
-  };
-
-  const sliderValueStyle = {
-    textAlign: 'center',
-    marginTop: '8px',
-    color: '#6b7280',
-    fontSize: '14px'
-  };
-
   return (
-    <div style={containerStyle}>
-      <div style={cardStyle}>
-        <h1 style={titleStyle}>🎰 Texas Hold'em Poker</h1>
+    <div className="page page--center">
+      <div className="panel panel--narrow">
+        <h1 className="brand">The Card Room</h1>
+        <p className="brand-sub">Multiplayer casino classics — play with friends or CPUs</p>
+        <div className="brand-rule">♠ ♥ ♦ ♣</div>
 
-        {error && <div style={errorStyle}>{error}</div>}
+        {error && <div className="alert-error">{error}</div>}
 
-        <div style={{ marginBottom: '30px' }}>
-          <label style={labelStyle}>Your Name</label>
+        <div className="field">
+          <label className="field-label">Choose a Game</label>
+          <div className="game-grid">
+            {GAMES.map((game) => (
+              <button
+                key={game.id}
+                type="button"
+                disabled={!game.available}
+                onClick={() => setSelectedGame(game.id)}
+                className={`game-tile${selectedGame === game.id ? ' game-tile--active' : ''}`}
+              >
+                <div className="game-tile-icon">{game.icon}</div>
+                <div className="game-tile-name">{game.name}</div>
+                {!game.available && <span className="game-tile-badge">Coming Soon</span>}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="field">
+          <label className="field-label">Your Name</label>
           <input
             type="text"
+            className="text-input"
             placeholder="Enter your name"
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
-            style={inputStyle}
             maxLength={20}
           />
         </div>
 
-        <div style={sliderContainerStyle}>
-          <label style={labelStyle}>Number of CPU Players: {botCount}</label>
+        <div className="field">
+          <label className="field-label">CPU Players: {botCount}</label>
           <input
             type="range"
+            className="slider"
             min="2"
             max="5"
             value={botCount}
             onChange={(e) => setBotCount(parseInt(e.target.value))}
-            style={sliderStyle}
           />
-          <div style={sliderValueStyle}>
-            You + {botCount} bots = {botCount + 1} players total
+          <div className="field-hint">
+            You + {botCount} CPUs = {botCount + 1} players total
           </div>
         </div>
 
         <button
           onClick={handleCreateRoom}
           disabled={isCreating}
-          style={primaryButtonStyle}
+          className="btn btn--gold"
         >
-          {isCreating ? 'Creating Room...' : 'Create Room'}
+          {isCreating ? 'Creating Room…' : 'Create Room'}
         </button>
 
-        <div style={dividerStyle}>
-          <span style={{ backgroundColor: 'white', padding: '0 10px' }}>OR</span>
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: 0,
-            right: 0,
-            height: '1px',
-            backgroundColor: '#d1d5db',
-            zIndex: -1
-          }}></div>
-        </div>
+        <div className="divider">OR JOIN A TABLE</div>
 
-        <div>
-          <label style={labelStyle}>Room Code</label>
+        <div className="field">
+          <label className="field-label">Room Code</label>
           <input
             type="text"
+            className="text-input"
             placeholder="Enter room code (e.g., ABC123)"
             value={roomCode}
             onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-            style={inputStyle}
             maxLength={6}
           />
         </div>
@@ -231,9 +149,9 @@ const HomePage = () => {
         <button
           onClick={handleJoinRoom}
           disabled={isJoining}
-          style={secondaryButtonStyle}
+          className="btn btn--green"
         >
-          {isJoining ? 'Joining Room...' : 'Join Room'}
+          {isJoining ? 'Joining Room…' : 'Join Room'}
         </button>
       </div>
     </div>

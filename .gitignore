@@ -42,3 +42,7 @@ lerna-debug.log*
 
 # Debug
 .env.development
+
+#Claude
+.claude
+.claude/

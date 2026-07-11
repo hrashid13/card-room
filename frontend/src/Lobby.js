@@ -10,6 +10,7 @@ const Lobby = () => {
   const [isHost, setIsHost] = useState(location.state?.isHost || false);
   const [error, setError] = useState('');
   const [myPlayerId, setMyPlayerId] = useState(socket.id);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setMyPlayerId(socket.id);
@@ -53,29 +54,15 @@ const Lobby = () => {
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(roomCode);
-    alert('Room code copied to clipboard!');
-  };
-
-  const containerStyle = {
-    minHeight: '100vh',
-    background: 'linear-gradient(to bottom right, #065f46, #064e3b)',
-    padding: '20px'
-  };
-
-  const cardStyle = {
-    backgroundColor: 'white',
-    borderRadius: '12px',
-    padding: '30px',
-    maxWidth: '800px',
-    margin: '0 auto',
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   if (!room) {
     return (
-      <div style={containerStyle}>
-        <div style={cardStyle}>
-          <p>Loading room...</p>
+      <div className="page page--center">
+        <div className="panel panel--narrow">
+          <p style={{ textAlign: 'center', margin: 0 }}>Loading room…</p>
         </div>
       </div>
     );
@@ -86,152 +73,51 @@ const Lobby = () => {
   const allHumansReady = humanPlayers.filter(p => p.id !== room.host).every(p => p.ready);
   const canStart = humanPlayers.length === 1 || allHumansReady; // Solo player or all others ready
 
-  const headerStyle = {
-    textAlign: 'center',
-    marginBottom: '30px'
-  };
-
-  const titleStyle = {
-    fontSize: '28px',
-    fontWeight: 'bold',
-    marginBottom: '10px',
-    color: '#1f2937'
-  };
-
-  const roomCodeStyle = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '10px',
-    backgroundColor: '#f3f4f6',
-    padding: '10px 20px',
-    borderRadius: '8px',
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: '#059669',
-    letterSpacing: '2px'
-  };
-
-  const copyButtonStyle = {
-    padding: '5px 10px',
-    backgroundColor: '#2563eb',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '12px'
-  };
-
-  const playersGridStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-    gap: '15px',
-    marginBottom: '30px'
-  };
-
-  const playerCardStyle = (isMe) => ({
-    backgroundColor: isMe ? '#dbeafe' : '#f3f4f6',
-    padding: '15px',
-    borderRadius: '8px',
-    border: isMe ? '2px solid #2563eb' : 'none'
-  });
-
-  const playerNameStyle = {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    marginBottom: '5px',
-    color: '#1f2937'
-  };
-
-  const playerStatusStyle = (ready) => ({
-    fontSize: '14px',
-    color: ready ? '#059669' : '#6b7280'
-  });
-
-  const buttonStyle = {
-    width: '100%',
-    padding: '14px',
-    borderRadius: '8px',
-    border: 'none',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    marginBottom: '10px'
-  };
-
-  const readyButtonStyle = (isReady) => ({
-    ...buttonStyle,
-    backgroundColor: isReady ? '#dc2626' : '#059669',
-    color: 'white'
-  });
-
-  const startButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: canStart ? '#059669' : '#d1d5db',
-    color: 'white',
-    cursor: canStart ? 'pointer' : 'not-allowed'
-  };
-
-  const errorStyle = {
-    backgroundColor: '#fee2e2',
-    color: '#991b1b',
-    padding: '12px',
-    borderRadius: '8px',
-    marginBottom: '15px',
-    textAlign: 'center'
-  };
-
-  const infoStyle = {
-    backgroundColor: '#dbeafe',
-    padding: '15px',
-    borderRadius: '8px',
-    marginBottom: '20px',
-    color: '#1e40af',
-    textAlign: 'center'
-  };
-
   const mePlayer = humanPlayers.find(p => p.id === myPlayerId);
   const isReady = mePlayer?.ready || false;
 
   return (
-    <div style={containerStyle}>
-      <div style={cardStyle}>
-        <div style={headerStyle}>
-          <h1 style={titleStyle}>Waiting Room</h1>
-          <div>
-            <span style={roomCodeStyle}>
-              {roomCode}
-              <button onClick={handleCopyCode} style={copyButtonStyle}>Copy</button>
-            </span>
-          </div>
+    <div className="page">
+      <div className="panel panel--wide">
+        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+          <h1 className="brand" style={{ fontSize: '28px' }}>Waiting Room</h1>
+          <div className="brand-rule">♠ ♥ ♦ ♣</div>
+          <span className="room-code-chip">
+            {roomCode}
+            <button onClick={handleCopyCode} className="btn btn--gold btn--sm">
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
+          </span>
         </div>
 
-        {error && <div style={errorStyle}>{error}</div>}
+        {error && <div className="alert-error">{error}</div>}
 
-        <div style={infoStyle}>
+        <div className="alert-info">
           {isHost ? (
             <p>You are the host. All players must ready up before you can start the game.</p>
           ) : (
-            <p>Waiting for host to start the game. Click "Ready" when you're prepared to play.</p>
+            <p>Waiting for the host to start the game. Click "Ready" when you're prepared to play.</p>
           )}
         </div>
 
-        <h3 style={{ marginBottom: '15px', color: '#374151' }}>
+        <h3 className="section-title">
           Players ({allPlayers.length}/6)
         </h3>
 
-        <div style={playersGridStyle}>
+        <div className="players-grid">
           {allPlayers.map((player) => {
             const isMe = player.id === myPlayerId;
+            const ready = player.ready || player.isBot;
             return (
-              <div key={player.id} style={playerCardStyle(isMe)}>
-                <div style={playerNameStyle}>
+              <div key={player.id} className={`player-card${isMe ? ' player-card--me' : ''}`}>
+                <div className="player-card-name">
                   {player.name} {isMe && '(You)'}
                   {player.id === room.host && ' 👑'}
                 </div>
-                <div style={playerStatusStyle(player.ready || player.isBot)}>
+                <div className={`player-card-status ${ready ? 'player-card-status--ready' : 'player-card-status--waiting'}`}>
                   {player.isBot ? '🤖 CPU' : player.ready ? '✅ Ready' : '⏳ Not Ready'}
                 </div>
-                <div style={{ fontSize: '14px', color: '#6b7280', marginTop: '5px' }}>
+                <div className="player-card-chips">
                   {player.chips} chips
                 </div>
               </div>
@@ -243,7 +129,7 @@ const Lobby = () => {
           {!isHost && (
             <button
               onClick={handleToggleReady}
-              style={readyButtonStyle(isReady)}
+              className={`btn ${isReady ? 'btn--red' : 'btn--green'}`}
             >
               {isReady ? 'Not Ready' : 'Ready'}
             </button>
@@ -253,7 +139,7 @@ const Lobby = () => {
             <button
               onClick={handleStartGame}
               disabled={!canStart}
-              style={startButtonStyle}
+              className="btn btn--gold"
             >
               {canStart ? 'Start Game' : `Waiting for players to ready up (${humanPlayers.filter(p => p.ready || p.id === room.host).length}/${humanPlayers.length})`}
             </button>

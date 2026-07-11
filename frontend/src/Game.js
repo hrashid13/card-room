@@ -57,10 +57,6 @@ const Game = () => {
     return newDeck;
   };
 
-  const getSuitColor = (suit) => {
-    return (suit === '♥' || suit === '♦') ? '#ef4444' : '#000000';
-  };
-
   // Hand evaluation
   const evaluateHand = (cards) => {
     if (cards.length < 5) return { rank: 0, name: 'High Card', value: 0 };
@@ -741,40 +737,20 @@ const Game = () => {
   }, [players.length]);
 
   const Card = ({ card, faceDown = false }) => {
-    const cardStyle = {
-      width: '64px',
-      height: '96px',
-      backgroundColor: 'white',
-      border: '2px solid #d1d5db',
-      borderRadius: '8px',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-      fontSize: '24px',
-      fontWeight: 'bold'
-    };
-
-    const faceDownStyle = {
-      ...cardStyle,
-      backgroundColor: '#2563eb',
-      color: 'white',
-      fontSize: '32px'
-    };
-
     if (!card) {
-      return <div style={cardStyle}>?</div>;
+      return <div className="playing-card">?</div>;
     }
 
     if (faceDown) {
-      return <div style={faceDownStyle}>🂠</div>;
+      return <div className="playing-card playing-card--down">🂠</div>;
     }
 
+    const suitClass = (card.suit === '♥' || card.suit === '♦') ? 'suit-red' : 'suit-black';
+
     return (
-      <div style={cardStyle}>
-        <div style={{ color: getSuitColor(card.suit) }}>{card.rank}</div>
-        <div style={{ color: getSuitColor(card.suit), fontSize: '18px' }}>{card.suit}</div>
+      <div className="playing-card">
+        <div className={suitClass}>{card.rank}</div>
+        <div className={`card-suit ${suitClass}`}>{card.suit}</div>
       </div>
     );
   };
@@ -787,86 +763,46 @@ const Game = () => {
   // Debug logging
   console.log(`[${myPlayer?.name}] activePlayerIndex=${activePlayerIndex}, currentPlayer=${currentPlayer?.name}, isMyTurn=${isMyTurn}, gameState=${gameState}`);
 
-  const containerStyle = {
-    width: '100%',
-    minHeight: '100vh',
-    background: 'linear-gradient(to bottom right, #065f46, #064e3b)',
-    padding: '16px',
-    display: 'flex',
-    flexDirection: 'column',
-    fontFamily: 'Arial, sans-serif'
-  };
-
-  const headerStyle = {
-    color: 'white',
-    textAlign: 'center',
-    marginBottom: '16px'
-  };
-
-  const buttonStyle = {
-    padding: '8px 16px',
-    borderRadius: '4px',
-    border: 'none',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    fontSize: '14px'
-  };
-
-  const playerBoxStyle = (player) => ({
-    backgroundColor: 'rgba(31, 41, 55, 0.8)',
-    borderRadius: '8px',
-    padding: '16px',
-    border: player === currentPlayer ? '4px solid #fbbf24' : 'none',
-    outline: players.indexOf(player) === dealerIndex ? '2px solid white' : 'none'
-  });
-
-  const humanPlayerBoxStyle = {
-    backgroundColor: 'rgba(30, 58, 138, 0.9)',
-    borderRadius: '8px',
-    padding: '16px',
-    border: isMyTurn ? '4px solid #fbbf24' : 'none',
-    outline: players.indexOf(myPlayer) === dealerIndex ? '2px solid white' : 'none',
-    marginTop: '16px'
-  };
-
   return (
-    <div style={containerStyle}>
-      <div style={headerStyle}>
-        <h1 style={{ fontSize: '32px', marginBottom: '8px' }}>Texas Hold'em - Room {roomCode}</h1>
-        <p style={{ fontSize: '18px' }}>{message}</p>
-        <p style={{ fontSize: '14px', marginTop: '4px' }}>
-          Round: {round} | Pot: {pot} | Current Bet: {currentBet}
+    <div className="page" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="game-header">
+        <h1>Texas Hold'em — Room {roomCode}</h1>
+        <p className="game-message">{message}</p>
+        <p className="game-stats">
+          Round: {round} &nbsp;•&nbsp; Pot: {pot} &nbsp;•&nbsp; Current Bet: {currentBet}
         </p>
       </div>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ marginBottom: '32px' }}>
-          <div style={{ color: 'white', fontSize: '20px', fontWeight: '600', marginBottom: '8px', textAlign: 'center' }}>
-            Community Cards
-          </div>
-          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+      <div className="table-felt">
+        <div>
+          <div className="community-label">Community Cards</div>
+          <div className="community-cards">
             {communityCards.length > 0 ? (
               communityCards.map((card, idx) => <Card key={idx} card={card} />)
             ) : (
-              <div style={{ color: 'white', fontSize: '18px' }}>No community cards yet</div>
+              <div className="community-empty">No community cards yet</div>
             )}
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px', marginBottom: '32px', width: '100%', maxWidth: '800px' }}>
+        <div className="seats-grid">
           {players.filter(p => p.id !== mySocketId).map((player) => {
             const playerIndex = players.indexOf(player);
             const isDealer = playerIndex === dealerIndex;
-            
+            const isActive = player === currentPlayer;
+
             return (
-              <div key={player.id} style={playerBoxStyle(player)}>
-                <div style={{ color: 'white', fontWeight: '600', marginBottom: '8px' }}>
+              <div
+                key={player.id}
+                className={`seat${isActive ? ' seat--active' : ''}${isDealer ? ' seat--dealer' : ''}`}
+              >
+                <div className="seat-name">
                   {player.name} {isDealer && '(D)'}
                   {player.isBot && ' 🤖'}
                 </div>
-                <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
+                <div className="seat-cards">
                   {player.folded ? (
-                    <div style={{ color: '#9ca3af', fontSize: '14px' }}>Folded</div>
+                    <div className="seat-folded">Folded</div>
                   ) : player.cards && player.cards.length > 0 ? (
                     gameState === 'showdown' ? (
                       player.cards.map((card, i) => <Card key={i} card={card} />)
@@ -874,11 +810,11 @@ const Game = () => {
                       [0, 1].map(i => <Card key={i} card={{ rank: '?', suit: '♠' }} faceDown={true} />)
                     )
                   ) : (
-                    <div style={{ color: '#9ca3af', fontSize: '14px' }}>No cards</div>
+                    <div className="seat-folded">No cards</div>
                   )}
                 </div>
-                <div style={{ color: 'white', fontSize: '14px' }}>
-                  Chips: {player.chips} | Bet: {player.bet}
+                <div className="seat-info">
+                  Chips: {player.chips} &nbsp;•&nbsp; Bet: {player.bet}
                 </div>
               </div>
             );
@@ -887,55 +823,53 @@ const Game = () => {
       </div>
 
       {myPlayer && (
-        <div style={humanPlayerBoxStyle}>
-          <div style={{ color: 'white', fontWeight: '600', marginBottom: '8px' }}>
+        <div className={`my-bar${isMyTurn ? ' my-bar--active' : ''}`}>
+          <div className="my-bar-name">
             {myPlayer.name} (You) {players.indexOf(myPlayer) === dealerIndex && '(D)'}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div style={{ display: 'flex', gap: '8px' }}>
+          <div className="my-bar-row">
+            <div className="my-bar-cards">
               {myPlayer.cards && myPlayer.cards.map((card, idx) => (
                 <Card key={idx} card={card} />
               ))}
             </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ color: 'white' }}>
-                Chips: {myPlayer.chips} | Current Bet: {myPlayer.bet}
-              </div>
+            <div className="my-bar-info">
+              Chips: {myPlayer.chips} &nbsp;•&nbsp; Current Bet: {myPlayer.bet}
             </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div className="my-bar-actions">
               {isMyTurn ? (
                 <>
                   <button
                     onClick={() => handlePlayerAction('fold')}
-                    style={{ ...buttonStyle, backgroundColor: '#dc2626', color: 'white' }}
+                    className="btn btn--red btn--sm"
                   >
                     Fold
                   </button>
                   <button
                     onClick={() => handlePlayerAction('call')}
-                    style={{ ...buttonStyle, backgroundColor: '#2563eb', color: 'white' }}
+                    className="btn btn--blue btn--sm"
                     disabled={myPlayer.chips === 0}
                   >
                     {callAmount === 0 ? 'Check' : `Call ${callAmount}`}
                   </button>
                   <button
                     onClick={() => handlePlayerAction('raise', 20)}
-                    style={{ ...buttonStyle, backgroundColor: '#ca8a04', color: 'white' }}
+                    className="btn btn--gold btn--sm"
                     disabled={myPlayer.chips <= callAmount}
                   >
                     Raise 20
                   </button>
                   <button
                     onClick={() => handlePlayerAction('raise', 50)}
-                    style={{ ...buttonStyle, backgroundColor: '#ca8a04', color: 'white' }}
+                    className="btn btn--gold btn--sm"
                     disabled={myPlayer.chips <= callAmount + 20}
                   >
                     Raise 50
                   </button>
                 </>
               ) : (
-                <div style={{ color: 'white' }}>
-                  {currentPlayer ? `Waiting for ${currentPlayer.name}...` : 'Waiting...'}
+                <div className="waiting-note">
+                  {currentPlayer ? `Waiting for ${currentPlayer.name}…` : 'Waiting…'}
                 </div>
               )}
             </div>
