@@ -28,7 +28,8 @@ const Lobby = () => {
 
     // Listen for game start — route to the screen for this room's game
     socket.on('gameStarted', ({ players, gameType }) => {
-      const path = gameType === 'blackjack' ? 'blackjack' : 'game';
+      const paths = { blackjack: 'blackjack', spades: 'spades' };
+      const path = paths[gameType] || 'game';
       navigate(`/${path}/${roomCode}`, { state: { players, roomCode } });
     });
 
@@ -83,7 +84,7 @@ const Lobby = () => {
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <h1 className="brand" style={{ fontSize: '28px' }}>Waiting Room</h1>
           <p className="brand-sub" style={{ marginBottom: '14px' }}>
-            {room.gameType === 'blackjack' ? 'Blackjack' : "Texas Hold'em"}
+            {{ blackjack: 'Blackjack', spades: 'Spades' }[room.gameType] || "Texas Hold'em"}
           </p>
           <div className="brand-rule">♠ ♥ ♦ ♣</div>
           <span className="room-code-chip">
@@ -105,11 +106,17 @@ const Lobby = () => {
         </div>
 
         <h3 className="section-title">
-          Players ({allPlayers.length}/6)
+          Players ({allPlayers.length}/{room.maxPlayers || 6})
         </h3>
 
+        {room.gameType === 'spades' && (
+          <div className="field-hint" style={{ textAlign: 'left', marginBottom: '12px' }}>
+            Partnerships: seats 1 &amp; 3 vs seats 2 &amp; 4 (partners sit across from each other).
+          </div>
+        )}
+
         <div className="players-grid">
-          {allPlayers.map((player) => {
+          {allPlayers.map((player, seatIndex) => {
             const isMe = player.id === myPlayerId;
             const ready = player.ready || player.isBot;
             return (
@@ -118,6 +125,11 @@ const Lobby = () => {
                   {player.name} {isMe && '(You)'}
                   {player.id === room.host && ' 👑'}
                 </div>
+                {room.gameType === 'spades' && (
+                  <div className="player-card-status player-card-status--waiting">
+                    Seat {seatIndex + 1} — Team {(seatIndex % 2) + 1}
+                  </div>
+                )}
                 <div className={`player-card-status ${ready ? 'player-card-status--ready' : 'player-card-status--waiting'}`}>
                   {player.isBot ? '🤖 CPU' : player.ready ? '✅ Ready' : '⏳ Not Ready'}
                 </div>

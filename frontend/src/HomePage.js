@@ -5,7 +5,7 @@ import { socket, connectSocket } from './socket';
 const GAMES = [
   { id: 'holdem', name: "Texas Hold'em", icon: '♠', available: true },
   { id: 'blackjack', name: 'Blackjack', icon: '♥', available: true },
-  { id: 'spades', name: 'Spades', icon: '♣', available: false }
+  { id: 'spades', name: 'Spades', icon: '♣', available: true }
 ];
 
 const HomePage = () => {
@@ -109,20 +109,28 @@ const HomePage = () => {
           />
         </div>
 
-        <div className="field">
-          <label className="field-label">CPU Players: {botCount}</label>
-          <input
-            type="range"
-            className="slider"
-            min="2"
-            max="5"
-            value={botCount}
-            onChange={(e) => setBotCount(parseInt(e.target.value))}
-          />
-          <div className="field-hint">
-            You + {botCount} CPUs = {botCount + 1} players total
+        {selectedGame === 'spades' ? (
+          <div className="field">
+            <div className="field-hint" style={{ marginTop: 0 }}>
+              Spades is played with exactly 4 players in two partnerships — empty seats are filled with CPUs.
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="field">
+            <label className="field-label">CPU Players: {botCount}</label>
+            <input
+              type="range"
+              className="slider"
+              min="2"
+              max="5"
+              value={botCount}
+              onChange={(e) => setBotCount(parseInt(e.target.value))}
+            />
+            <div className="field-hint">
+              You + {botCount} CPUs = {botCount + 1} players total
+            </div>
+          </div>
+        )}
 
         <button
           onClick={handleCreateRoom}

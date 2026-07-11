@@ -31,24 +31,35 @@ function generateRoomCode() {
 }
 
 // Create initial bot players
+const BOT_NAMES = ['Bot Alpha', 'Bot Beta', 'Bot Gamma', 'Bot Delta', 'Bot Epsilon'];
+
+function createBot(index) {
+  return {
+    id: `bot-${index}`,
+    name: BOT_NAMES[index] || `Bot ${index + 1}`,
+    isBot: true,
+    chips: 1000,
+    bet: 0,
+    folded: false,
+    cards: [],
+    ready: true
+  };
+}
+
 function createBots(count) {
   const bots = [];
-  const botNames = ['Bot Alpha', 'Bot Beta', 'Bot Gamma', 'Bot Delta', 'Bot Epsilon'];
-  
   for (let i = 0; i < count; i++) {
-    bots.push({
-      id: `bot-${i}`,
-      name: botNames[i],
-      isBot: true,
-      chips: 1000,
-      bet: 0,
-      folded: false,
-      cards: [],
-      ready: true
-    });
+    bots.push(createBot(i));
   }
-  
   return bots;
+}
+
+// Add a bot with an id that doesn't collide with the room's current bots
+function addBotToRoom(room) {
+  const existingIds = new Set(room.bots.map(b => b.id));
+  let i = 0;
+  while (existingIds.has(`bot-${i}`)) i++;
+  room.bots.push(createBot(i));
 }
 
 // Socket.io connection handling
@@ -59,9 +70,13 @@ io.on('connection', (socket) => {
   socket.on('createRoom', ({ playerName, botCount, gameType }) => {
     const roomCode = generateRoomCode();
 
-    // Validate bot count (2-5)
-    const validBotCount = Math.max(2, Math.min(5, botCount || 3));
-    const validGameType = ['holdem', 'blackjack'].includes(gameType) ? gameType : 'holdem';
+    const validGameType = ['holdem', 'blackjack', 'spades'].includes(gameType) ? gameType : 'holdem';
+
+    // Spades is always exactly 4 players — empty seats are CPUs
+    const validBotCount = validGameType === 'spades'
+      ? 3
+      : Math.max(2, Math.min(5, botCount || 3));
+    const maxPlayers = validGameType === 'spades' ? 4 : 6;
 
     const room = {
       code: roomCode,
@@ -80,7 +95,7 @@ io.on('connection', (socket) => {
         }
       ],
       bots: createBots(validBotCount),
-      maxPlayers: 6,
+      maxPlayers,
       gameState: 'lobby', // lobby, playing, finished
       gameData: null
     };
@@ -184,6 +199,16 @@ io.on('connection', (socket) => {
       return;
     }
     
+    // Spades needs exactly 4 seats — trim or pad bots to fit
+    if (room.gameType === 'spades') {
+      while (room.players.length + room.bots.length > 4 && room.bots.length > 0) {
+        room.bots.pop();
+      }
+      while (room.players.length + room.bots.length < 4) {
+        addBotToRoom(room);
+      }
+    }
+
     // Combine players and bots
     const allPlayers = [...room.players, ...room.bots];
     
@@ -202,16 +227,17 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Game action (fold, call, raise)
-  socket.on('gameAction', ({ roomCode, action, amount }) => {
+  // Game action (fold/call/raise, hit/stand, bid/play, …)
+  socket.on('gameAction', ({ roomCode, action, amount, payload }) => {
     const room = rooms.get(roomCode);
     if (!room || room.gameState !== 'playing') return;
-    
+
     // Broadcast action to all players in room
     io.to(roomCode).emit('playerAction', {
       playerId: socket.id,
       action,
-      amount
+      amount,
+      payload
     });
   });
 
@@ -240,9 +266,10 @@ io.on('connection', (socket) => {
         
         room.players.splice(playerIndex, 1);
         
-        // Add a bot back if in lobby
-        if (room.gameState === 'lobby' && room.bots.length < 5) {
-          room.bots.push(createBots(1)[0]);
+        // Add a bot back if in lobby (spades always keeps 4 seats filled)
+        const seatCap = room.gameType === 'spades' ? 4 : 6;
+        if (room.gameState === 'lobby' && room.players.length + room.bots.length < seatCap && room.bots.length < 5) {
+          addBotToRoom(room);
         }
         
         // If room is empty, delete it
