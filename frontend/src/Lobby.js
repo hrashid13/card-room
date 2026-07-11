@@ -123,7 +123,7 @@ const Lobby = () => {
               <div key={player.id} className={`player-card${isMe ? ' player-card--me' : ''}`}>
                 <div className="player-card-name">
                   {player.name} {isMe && '(You)'}
-                  {player.id === room.host && ' 👑'}
+                  {player.id === room.host && ' (Host)'}
                 </div>
                 {room.gameType === 'spades' && (
                   <div className="player-card-status player-card-status--waiting">
@@ -131,7 +131,7 @@ const Lobby = () => {
                   </div>
                 )}
                 <div className={`player-card-status ${ready ? 'player-card-status--ready' : 'player-card-status--waiting'}`}>
-                  {player.isBot ? '🤖 CPU' : player.ready ? '✅ Ready' : '⏳ Not Ready'}
+                  {player.isBot ? 'CPU' : player.ready ? 'Ready' : 'Not Ready'}
                 </div>
                 <div className="player-card-chips">
                   {player.chips} chips

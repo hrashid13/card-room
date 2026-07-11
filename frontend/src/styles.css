@@ -787,6 +787,7 @@ select {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  gap: 6px;
   padding-top: 4px;
 }
 
@@ -794,18 +795,12 @@ select {
   background: none;
   border: none;
   padding: 0;
-  margin-left: -26px;
   cursor: pointer;
   transition: transform 0.12s;
-  position: relative;
-}
-
-.hand-card:first-child {
-  margin-left: 0;
 }
 
 .hand-card:hover:not(:disabled) {
-  transform: translateY(-10px);
+  transform: translateY(-8px);
 }
 
 .hand-card:disabled {

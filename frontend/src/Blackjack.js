@@ -390,7 +390,7 @@ const Blackjack = () => {
 
   const Card = ({ card, faceDown = false }) => {
     if (faceDown) {
-      return <div className="playing-card playing-card--down">🂠</div>;
+      return <div className="playing-card playing-card--down" />;
     }
     if (!card) {
       return <div className="playing-card">?</div>;
@@ -482,7 +482,7 @@ const Blackjack = () => {
               <div key={player.id} className={`seat${isActive ? ' seat--active' : ''}`}>
                 <div className="seat-name">
                   {player.name}
-                  {player.isBot && ' 🤖'}
+                  {player.isBot && ' (CPU)'}
                   {' '}<ResultBadge result={player.result} />
                 </div>
                 <div className="seat-cards">

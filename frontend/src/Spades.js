@@ -499,13 +499,13 @@ const Spades = () => {
     return (
       <div className={`seat seat--compact${isActive ? ' seat--active' : ''}`}>
         <div className="seat-name">
-          {p.name} {p.isBot && '🤖'} {rel === 2 && '(Partner)'}
+          {p.name} {p.isBot && '(CPU)'} {rel === 2 && '(Partner)'}
         </div>
         <div className="seat-info">
           Bid: {bidLabel(p.bid)} &nbsp;•&nbsp; Tricks: {p.tricks}
         </div>
         <div className="seat-info" style={{ marginTop: '4px' }}>
-          🂠 {p.cards.length} cards
+          {p.cards.length} cards in hand
         </div>
       </div>
     );
@@ -586,7 +586,7 @@ const Spades = () => {
             {phase === 'gameover' ? (
               <>
                 <div className="score-summary-winner">
-                  🏆 {winnerTeam === myTeam ? 'Your team wins!' : 'Opponents win!'}
+                  {winnerTeam === myTeam ? 'Your team wins!' : 'Opponents win!'}
                 </div>
                 <button className="btn btn--gold" style={{ marginTop: '14px' }} onClick={() => navigate('/')}>
                   Back to Home
@@ -661,7 +661,6 @@ const Spades = () => {
                   className="hand-card"
                   disabled={!playable}
                   onClick={() => playCard(card)}
-                  style={{ zIndex: i }}
                 >
                   <Card card={card} small />
                 </button>

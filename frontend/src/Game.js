@@ -742,7 +742,7 @@ const Game = () => {
     }
 
     if (faceDown) {
-      return <div className="playing-card playing-card--down">🂠</div>;
+      return <div className="playing-card playing-card--down" />;
     }
 
     const suitClass = (card.suit === '♥' || card.suit === '♦') ? 'suit-red' : 'suit-black';
@@ -798,7 +798,7 @@ const Game = () => {
               >
                 <div className="seat-name">
                   {player.name} {isDealer && '(D)'}
-                  {player.isBot && ' 🤖'}
+                  {player.isBot && ' (CPU)'}
                 </div>
                 <div className="seat-cards">
                   {player.folded ? (
