@@ -56,15 +56,17 @@ io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
 
   // Create a new room
-  socket.on('createRoom', ({ playerName, botCount }) => {
+  socket.on('createRoom', ({ playerName, botCount, gameType }) => {
     const roomCode = generateRoomCode();
-    
+
     // Validate bot count (2-5)
     const validBotCount = Math.max(2, Math.min(5, botCount || 3));
-    
+    const validGameType = ['holdem', 'blackjack'].includes(gameType) ? gameType : 'holdem';
+
     const room = {
       code: roomCode,
       host: socket.id,
+      gameType: validGameType,
       players: [
         {
           id: socket.id,
@@ -195,7 +197,8 @@ io.on('connection', (socket) => {
     console.log(`Game started in room ${roomCode}`);
     
     io.to(roomCode).emit('gameStarted', {
-      players: allPlayers
+      players: allPlayers,
+      gameType: room.gameType
     });
   });
 
@@ -267,6 +270,7 @@ function getRoomData(room) {
   return {
     code: room.code,
     host: room.host,
+    gameType: room.gameType || 'holdem',
     players: room.players.map(p => ({
       id: p.id,
       name: p.name,

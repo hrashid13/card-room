@@ -26,9 +26,10 @@ const Lobby = () => {
       console.log('Player left:', playerId);
     });
 
-    // Listen for game start
-    socket.on('gameStarted', ({ players }) => {
-      navigate(`/game/${roomCode}`, { state: { players, roomCode } });
+    // Listen for game start — route to the screen for this room's game
+    socket.on('gameStarted', ({ players, gameType }) => {
+      const path = gameType === 'blackjack' ? 'blackjack' : 'game';
+      navigate(`/${path}/${roomCode}`, { state: { players, roomCode } });
     });
 
     // Listen for errors
@@ -81,6 +82,9 @@ const Lobby = () => {
       <div className="panel panel--wide">
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <h1 className="brand" style={{ fontSize: '28px' }}>Waiting Room</h1>
+          <p className="brand-sub" style={{ marginBottom: '14px' }}>
+            {room.gameType === 'blackjack' ? 'Blackjack' : "Texas Hold'em"}
+          </p>
           <div className="brand-rule">♠ ♥ ♦ ♣</div>
           <span className="room-code-chip">
             {roomCode}

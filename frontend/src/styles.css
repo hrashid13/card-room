@@ -619,6 +619,58 @@ select {
   font-style: italic;
 }
 
+/* ---------- Blackjack ---------- */
+
+.bj-dealer {
+  margin-bottom: 10px;
+}
+
+.hand-total {
+  display: inline-block;
+  background: rgba(212, 175, 55, 0.18);
+  border: 1px solid var(--gold-dark);
+  color: var(--gold-light);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.result-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  vertical-align: middle;
+}
+
+.result-badge--win {
+  background: rgba(39, 147, 95, 0.25);
+  border: 1px solid #27935f;
+  color: #6fd7a3;
+}
+
+.result-badge--lose {
+  background: rgba(176, 48, 44, 0.25);
+  border: 1px solid var(--red);
+  color: #e89a97;
+}
+
+.result-badge--push {
+  background: rgba(138, 150, 145, 0.25);
+  border: 1px solid var(--muted);
+  color: #c3ccc8;
+}
+
+.result-badge--blackjack {
+  background: linear-gradient(180deg, var(--gold-light), var(--gold-dark));
+  border: 1px solid var(--gold-dark);
+  color: #2b2005;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 720px) {

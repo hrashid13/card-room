@@ -4,7 +4,7 @@ import { socket, connectSocket } from './socket';
 
 const GAMES = [
   { id: 'holdem', name: "Texas Hold'em", icon: '♠', available: true },
-  { id: 'blackjack', name: 'Blackjack', icon: '♥', available: false },
+  { id: 'blackjack', name: 'Blackjack', icon: '♥', available: true },
   { id: 'spades', name: 'Spades', icon: '♣', available: false }
 ];
 
@@ -28,7 +28,7 @@ const HomePage = () => {
     setError('');
     connectSocket();
 
-    socket.emit('createRoom', { playerName: playerName.trim(), botCount });
+    socket.emit('createRoom', { playerName: playerName.trim(), botCount, gameType: selectedGame });
 
     socket.once('roomCreated', ({ roomCode, room }) => {
       setIsCreating(false);
