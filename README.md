@@ -1,22 +1,22 @@
 # Card Room
 
-A real-time multiplayer card game hub built with React, Node.js, and Socket.io. Create a room, share a code, and play with friends online — no accounts required.
+A real-time multiplayer card game hub built with React, Node.js, and Socket.io. Create a room, share a code, and play with friends online, no accounts required.
 
 [![Live Demo](https://img.shields.io/badge/Demo-Play_Now-green)](https://pokertexasholdem.up.railway.app/)
 
 ## Games
 
-- **Texas Hold'em** — Full poker gameplay with preflop, flop, turn, and river betting rounds, smart CPU bots to fill empty seats, and pot-based hand evaluation
-- **Blackjack** — Classic dealer-vs-players blackjack
-- **Spades** — Trick-taking partnership card game
+- **Texas Hold'em**: Full poker gameplay with preflop, flop, turn, and river betting rounds, smart CPU bots to fill empty seats, and pot-based hand evaluation
+- **Blackjack**: Classic dealer-vs-players blackjack
+- **Spades**: Trick-taking partnership card game
 
 ## Features
 
-- **Real-time Multiplayer** — Play with friends online via Socket.io
-- **Room-based Gameplay** — Create or join rooms with 6-digit codes
-- **AI Opponents** — CPU bots available to fill empty seats (Texas Hold'em)
-- **No Account Required** — Jump right in and play
-- **Responsive Design** — Works on desktop and mobile
+- **Real-time Multiplayer**: Play with friends online via Socket.io
+- **Room-based Gameplay**: Create or join rooms with 6-digit codes
+- **AI Opponents**: CPU bots available to fill empty seats (Texas Hold'em)
+- **No Account Required**: Jump right in and play
+- **Responsive Design**: Works on desktop and mobile
 
 ## Tech Stack
 
