@@ -1,18 +1,22 @@
-# Texas Hold'em Multiplayer Poker
+# Card Room
 
-A real-time multiplayer Texas Hold'em poker game built with React, Node.js, and Socket.io. Play with friends online with automatic CPU bot opponents to fill empty seats.
+A real-time multiplayer card game hub built with React, Node.js, and Socket.io. Create a room, share a code, and play with friends online — no accounts required.
 
-[![Live Demo](https://img.shields.io/badge/Demo-Texas_Holdem-green)](https://pokertexasholdem.up.railway.app/)
+[![Live Demo](https://img.shields.io/badge/Demo-Play_Now-green)](https://pokertexasholdem.up.railway.app/)
+
+## Games
+
+- **Texas Hold'em** — Full poker gameplay with preflop, flop, turn, and river betting rounds, smart CPU bots to fill empty seats, and pot-based hand evaluation
+- **Blackjack** — Classic dealer-vs-players blackjack
+- **Spades** — Trick-taking partnership card game
 
 ## Features
 
-- **Real-time Multiplayer** - Play with 2-6 players online
-- **AI Opponents** - Smart CPU bots automatically fill empty seats
-- **Full Texas Hold'em Rules** - Preflop, Flop, Turn, River betting rounds
-- **Room-based Gameplay** - Create or join rooms with 6-digit codes
-- **Chip Management** - Starting chips with blind betting system
-- **No Account Required** - Jump right in and play
-- **Responsive Design** - Works on desktop and mobile
+- **Real-time Multiplayer** — Play with friends online via Socket.io
+- **Room-based Gameplay** — Create or join rooms with 6-digit codes
+- **AI Opponents** — CPU bots available to fill empty seats (Texas Hold'em)
+- **No Account Required** — Jump right in and play
+- **Responsive Design** — Works on desktop and mobile
 
 ## Tech Stack
 
@@ -20,7 +24,7 @@ A real-time multiplayer Texas Hold'em poker game built with React, Node.js, and 
 - React 18
 - React Router DOM
 - Socket.io Client
-- Vanilla CSS (inline styles)
+- CSS
 
 **Backend:**
 - Node.js
@@ -38,38 +42,38 @@ A real-time multiplayer Texas Hold'em poker game built with React, Node.js, and 
 ### Installation
 
 1. **Clone the repository**
-```bash
-git clone https://github.com/yourusername/texas-holdem-multiplayer.git
-cd texas-holdem-multiplayer
-```
+   ```
+   git clone https://github.com/hrashid13/card-room.git
+   cd card-room
+   ```
 
 2. **Install Backend Dependencies**
-```bash
-cd backend
-npm install
-```
+   ```
+   cd backend
+   npm install
+   ```
 
 3. **Install Frontend Dependencies**
-```bash
-cd ../frontend
-npm install
-```
+   ```
+   cd ../frontend
+   npm install
+   ```
 
 ### Running Locally
 
 1. **Start the Backend Server**
-```bash
-cd backend
-npm run dev
-```
-The backend will run on `http://localhost:3001`
+   ```
+   cd backend
+   npm run dev
+   ```
+   The backend will run on `http://localhost:3001`
 
 2. **Start the Frontend** (in a new terminal)
-```bash
-cd frontend
-npm start
-```
-The frontend will run on `http://localhost:3000`
+   ```
+   cd frontend
+   npm start
+   ```
+   The frontend will run on `http://localhost:3000`
 
 3. **Open your browser** and navigate to `http://localhost:3000`
 
@@ -78,7 +82,7 @@ The frontend will run on `http://localhost:3000`
 ### Creating a Room
 
 1. Enter your name
-2. Select number of CPU bots (2-5)
+2. Pick a game (Texas Hold'em, Blackjack, or Spades)
 3. Click "Create Room"
 4. Share the 6-digit room code with friends
 
@@ -94,49 +98,22 @@ The frontend will run on `http://localhost:3000`
 - Players mark themselves as "Ready"
 - Host starts the game when ready
 
-### Gameplay
-
-- Players act in turn: **Fold**, **Call/Check**, or **Raise**
-- Betting rounds: **Preflop** → **Flop** → **Turn** → **River**
-- Best hand wins the pot
-- New hands deal automatically
-
-## Game Rules
-
-- **Blinds:** Small blind (10 chips), Big blind (20 chips)
-- **Starting Chips:** 1000 chips per player
-- **Betting Actions:**
-  - **Fold:** Exit the current hand
-  - **Call/Check:** Match current bet (or check if bet is 0)
-  - **Raise:** Increase the bet (20 or 50 chip raises available)
-- **Winning:** Best 5-card hand from 2 hole cards + 5 community cards
-
-## Bot AI
-
-CPU bots use a strategic AI that considers:
-- Hand strength (pairs, high cards, suited connectors)
-- Community cards (flop, turn, river)
-- Position at the table
-- Pot odds and stack sizes
-- Random variance for unpredictability
-
 ## Project Structure
 
 ```
-texas-holdem-multiplayer/
+card-room/
 ├── backend/
-│   ├── server.js              # Express + Socket.io server
+│   ├── server.js         # Express + Socket.io server, game room management
 │   ├── package.json
 │   └── .env
 ├── frontend/
 │   ├── public/
 │   │   └── index.html
 │   ├── src/
-│   │   ├── App.js             # Main app with routing
-│   │   ├── HomePage.js        # Create/join room
-│   │   ├── Lobby.js           # Waiting room
-│   │   ├── Game.js            # Poker game logic
-│   │   ├── socket.js          # Socket.io client
+│   │   ├── App.js        # Main app with routing
+│   │   ├── HomePage.js   # Create/join room, game selection
+│   │   ├── Lobby.js      # Waiting room
+│   │   ├── socket.js     # Socket.io client
 │   │   └── index.js
 │   ├── package.json
 │   ├── .env
@@ -151,7 +128,7 @@ texas-holdem-multiplayer/
 
 #### Backend Deployment
 
-```bash
+```
 cd backend
 railway login
 railway init
@@ -164,7 +141,7 @@ Set environment variable in Railway dashboard:
 
 #### Frontend Deployment
 
-```bash
+```
 cd frontend
 railway init
 railway up
@@ -178,7 +155,7 @@ Set environment variables in Railway dashboard:
 
 ### Alternative: Deploy Frontend to Netlify
 
-```bash
+```
 cd frontend
 npm run build
 # Upload the 'build' folder to Netlify
@@ -190,18 +167,18 @@ Set environment variable in Netlify:
 ## Environment Variables
 
 ### Backend (.env)
-```env
+```
 PORT=3001
 FRONTEND_URL=http://localhost:3000
 ```
 
 ### Frontend (.env)
-```env
+```
 REACT_APP_SOCKET_URL=http://localhost:3001
 ```
 
 ### Frontend (.env.production)
-```env
+```
 DISABLE_ESLINT_PLUGIN=true
 REACT_APP_SOCKET_URL=https://your-backend-url.up.railway.app
 ```
@@ -240,10 +217,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 Hesham Rashid
 
 - Portfolio: https://www.heshamrashid.org/
-- LinkedIn: https://www.linkedin.com/in/hesham-rashid/ 
+- LinkedIn: https://www.linkedin.com/in/hesham-rashid/
 - Email: h.f.rashid@gmail.com
 
-Master's in AI and Business Analytics - University of South Florida
+Master's in AI and Business Analytics — University of South Florida
 
 ## License
 
@@ -253,7 +230,7 @@ This project is licensed under the MIT License.
 
 - Built with React and Socket.io
 - Poker hand evaluation algorithm
-- Inspired by classic Texas Hold'em poker
+- Inspired by classic card games: Texas Hold'em, Blackjack, and Spades
 
 ---
 
